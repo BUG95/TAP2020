@@ -8,14 +8,7 @@ namespace MovieManagement.Models
 {
     public class Movie
     {
-        public Movie(string movieTitle, int movieYear, string movieLanguage, string moviePath)
-        {
-            MovieTitle = movieTitle;
-            MovieYear = movieYear;
-            MovieLanguage = movieLanguage;
-            MoviePath = moviePath;
-        }
-
+        
         public int MovieId { get; set; }
         public string MovieTitle { get; set; }
         public int MovieYear { get; set; }
