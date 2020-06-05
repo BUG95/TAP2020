@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MovieManagement.Models
 {
-    public class MovieDbContext : DbContext
+    public class MovieDbContext : IdentityDbContext
     {
         public MovieDbContext(DbContextOptions<MovieDbContext> options)
             : base(options)
@@ -15,6 +16,7 @@ namespace MovieManagement.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<MovieCasting>().HasKey(mc => new { mc.MovieId, mc.ActorId });
             modelBuilder.Entity<MovieGenre>().HasKey(mg => new { mg.MovieId, mg.GenreId });
             modelBuilder.Entity<MovieDirection>().HasKey(md => new { md.MovieId, md.DirectorId });

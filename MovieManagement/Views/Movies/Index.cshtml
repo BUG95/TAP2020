@@ -1,53 +1,48 @@
 ﻿@model IEnumerable<MovieManagement.Models.Movie>
+@inject SignInManager<IdentityUser> signInManager;
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieLanguage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MoviePath)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MovieTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MovieYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MovieLanguage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoviePath)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MovieId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MovieId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MovieId">Delete</a>
-            </td>
-        </tr>
+<h2>Movie List</h2>
+@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Add New Movie</a>
+    </p>
 }
-    </tbody>
-</table>
+<style>
+    .card {
+        margin-bottom: 50px !important;
+    }
+</style>
+<div class="container">
+    <div class="row-fluid ">
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-4">
+                <div class="card-columns-fluid">
+                    <div class="card mb-3" style="min-width: 18rem;">
+                        <img class="card-img-top" src="~/images/@Html.DisplayFor(modelItem => item.MovieCoverImage)" width="300" height="300" alt="Card image cap" />
+                        <div class="card-block">
+                            <h5 class="card-title"><b>@Html.DisplayFor(modelItem => item.MovieTitle)</b></h5>
+                            <p class="card-text">
+                                Release Year: @Html.DisplayFor(modelItem => item.MovieYear)<br />
+                                Movie Language: @Html.DisplayFor(modelItem => item.MovieLanguage)
+                            </p>
+
+                            <a asp-action="View" asp-route-id="@item.MovieId" class="btn btn-primary">View</a>
+                            @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.MovieId" class="btn btn-primary">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.MovieId" class="btn btn-danger">Delete</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
