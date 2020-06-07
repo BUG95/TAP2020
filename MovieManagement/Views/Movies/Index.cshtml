@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MovieManagement.Models.Movie>
+﻿@model  MovieManagement.ViewModels.MovieGenreViewModel
 @inject SignInManager<IdentityUser> signInManager;
 
 @{
@@ -12,6 +12,19 @@
         <a asp-action="Create" class="btn btn-primary">Add New Movie</a>
     </p>
 }
+
+<form asp-controller="Movies" asp-action="Index" method="get">
+    <p>
+        Genre:
+        <select asp-for="MovieGenre" asp-items="Model.Genres">
+            <option value="">All</option>
+        </select>
+        Title: <input type="text" name="SearchString">
+        <input type="submit" value="Search" />
+    </p>
+</form>
+<br />
+<br />
 <style>
     .card {
         margin-bottom: 50px !important;
@@ -19,16 +32,19 @@
 </style>
 <div class="container">
     <div class="row-fluid ">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Movies)
         {
             <div class="col-sm-4">
                 <div class="card-columns-fluid">
                     <div class="card mb-3" style="min-width: 18rem;">
                         <img class="card-img-top" src="~/images/@Html.DisplayFor(modelItem => item.MovieCoverImage)" width="300" height="300" alt="Card image cap" />
                         <div class="card-block">
-                            <h5 class="card-title"><b>@Html.DisplayFor(modelItem => item.MovieTitle)</b></h5>
+                            <h5 class="card-title">
+                                <b>@Html.DisplayFor(modelItem => item.MovieTitle)</b>
+                            </h5>
                             <p class="card-text">
-                                Release Year: @Html.DisplayFor(modelItem => item.MovieYear)<br />
+                                Release Year: @Html.DisplayFor(modelItem => item.MovieYear)
+                                <br />
                                 Movie Language: @Html.DisplayFor(modelItem => item.MovieLanguage)
                             </p>
 

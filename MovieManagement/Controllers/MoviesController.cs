@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MovieManagement.Models;
+using MovieManagement.ViewModels;
 
 namespace MovieManagement.Controllers
 {
@@ -22,9 +23,34 @@ namespace MovieManagement.Controllers
 
         // GET: Movies
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
-            return View(await _context.Movies.ToListAsync());
+            var genreQuery = await _context.MovieGenres
+                .OrderBy(x=>x.Genre.GenreTitle)
+                .Select(x => x.Genre.GenreTitle)
+                .Distinct()
+                .ToListAsync();
+
+            var movies = from movie in _context.Movies
+                         select movie;
+            
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(m => m.MovieTitle.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(mg => mg.MovieGenres.Any(g=>g.Genre.GenreTitle.ToString() == movieGenre));
+            }
+
+            var movieGenreVM = new MovieGenreViewModel
+            {
+                Genres = new SelectList(genreQuery.Distinct()),
+                Movies = await movies.ToListAsync()
+            };
+
+            return View(movieGenreVM);
         }
 
         [AllowAnonymous]
