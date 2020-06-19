@@ -72,7 +72,7 @@ namespace MovieManagement.Controllers
                     return RedirectToAction("index", "movies");
                 }
 
-                    ModelState.AddModelError("", "Invalid Login Attemp");
+                    ModelState.AddModelError("", "Invalid Login Attempt");
             }
             return View(model);
         }

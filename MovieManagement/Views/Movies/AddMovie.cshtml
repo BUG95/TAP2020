@@ -1,0 +1,41 @@
+﻿@model AddMovieViewModel
+@{
+    ViewData["Title"] = "Add Movie";
+}
+
+<h2>Add Movie</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Movie.MovieTitle"></label>
+                <input asp-for="Movie.MovieTitle" class="form-control" />
+                <!-- <label asp-for="Movie.MovieCoverImage" class="form-control"></label> -->
+                <!-- <input asp-for="Movie.MovieCoverImage" /> -->
+                <label asp-for="Photo" class="custom-file-label"></label>
+                <input asp-for="Photo" class="form-control custom-file-label custom-file-input"  />
+                <label asp-for="Movie.MovieLanguage"></label>
+                <input asp-for="Movie.MovieLanguage" class="form-control" />
+                <label asp-for="Movie.MovieYear"></label>
+                <input asp-for="Movie.MovieYear" class="form-control" />
+                <label asp-for="Movie.MoviePath"></label>
+                <input asp-for="Movie.MoviePath" class="form-control" />
+                <label asp-for="Actor.ActorFirstName"></label>
+                <input asp-for="Actor.ActorFirstName" class="form-control" />
+                <label asp-for="Actor.ActorLastName"></label>
+                <input asp-for="Actor.ActorLastName" class="form-control" />
+                <label asp-for="Actor.ActorGender"></label>
+                <input asp-for="Actor.ActorGender" class="form-control" />
+                <label asp-for="Director.DirectorFirstName"></label>
+                <input asp-for="Director.DirectorFirstName" class="form-control" />
+                <label asp-for="Director.DirectorLastName"></label>
+                <input asp-for="Director.DirectorLastName" class="form-control" />
+                <label asp-for="Genre.GenreTitle"></label>
+                <select asp-for="Genre.GenreTitle" asp-items="Model.Genres" style="background-color: yellow!important" class="form-control"></select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add movie</button>
+        </form>
+    </div>
+</div>

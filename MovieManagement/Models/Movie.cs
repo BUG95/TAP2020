@@ -17,7 +17,9 @@ namespace MovieManagement.Models
         public int MovieYear { get; set; }
         [Display(Name = "Language")]
         public string MovieLanguage { get; set; }
+        [Display(Name = "Path: https://www.youtube.com/watch?v=")]
         public string MoviePath { get; set; }
+        [Display(Name = "Cover Image")]
         public string MovieCoverImage { get; set; }
 
         public IList<MovieGenre> MovieGenres { get; set; }

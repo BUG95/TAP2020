@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MovieManagement.Models;
 using MovieManagement.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace MovieManagement.Controllers
 {
@@ -15,10 +17,12 @@ namespace MovieManagement.Controllers
     public class MoviesController : Controller
     {
         private readonly MovieDbContext _context;
+        private readonly IHostingEnvironment hostingEnvironment;
 
-        public MoviesController(MovieDbContext context)
+        public MoviesController(MovieDbContext context, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            this.hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Movies
@@ -26,14 +30,14 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
             var genreQuery = await _context.MovieGenres
-                .OrderBy(x=>x.Genre.GenreTitle)
+                .OrderBy(x => x.Genre.GenreTitle)
                 .Select(x => x.Genre.GenreTitle)
                 .Distinct()
                 .ToListAsync();
 
             var movies = from movie in _context.Movies
                          select movie;
-            
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 movies = movies.Where(m => m.MovieTitle.Contains(searchString));
@@ -41,7 +45,7 @@ namespace MovieManagement.Controllers
 
             if (!string.IsNullOrEmpty(movieGenre))
             {
-                movies = movies.Where(mg => mg.MovieGenres.Any(g=>g.Genre.GenreTitle.ToString() == movieGenre));
+                movies = movies.Where(mg => mg.MovieGenres.Any(g => g.Genre.GenreTitle.ToString() == movieGenre));
             }
 
             var movieGenreVM = new MovieGenreViewModel
@@ -185,5 +189,88 @@ namespace MovieManagement.Controllers
         {
             return _context.Movies.Any(e => e.MovieId == id);
         }
+
+        [HttpGet]
+        public IActionResult AddMovie()
+        {
+            var addMovieViewModel = new AddMovieViewModel
+            {
+                Genres = new SelectList(Enum.GetValues(typeof(Genres)))
+            };
+            return View(addMovieViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMovie(AddMovieViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string uniqueFileName = null;
+                if (model.Photo != null)
+                {
+                    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "images");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName; //guid = global unique identifier
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+                    model.Movie.MovieCoverImage = uniqueFileName;
+                }
+
+                int movieId = _context.Movies.Last().MovieId + 1;
+                int actorId = _context.Actors.Last().ActorId + 1;
+                int directorId = _context.Directors.Last().DirectorId + 1;
+
+
+                
+                _context.Add(model.Movie);
+                _context.Add(model.Actor);
+                _context.Add(model.Director);
+
+                MovieCasting movieCasting = new MovieCasting
+                {
+                    MovieId = movieId,
+                    ActorId = actorId,
+                    Actor = model.Actor,
+                    Movie = model.Movie,
+                    Role = ""
+                };
+                MovieDirection movieDirection = new MovieDirection
+                {
+                    MovieId = movieId,
+                    DirectorId = directorId,
+                    Director = model.Director,
+                    Movie = model.Movie
+                };
+                
+                Array _genres = Enum.GetValues(typeof(Genres));
+                int genreId = 0;
+
+                foreach(int gen in _genres)
+                {
+                    if(Enum.GetName(typeof(Genres), gen) == model.Genre.GenreTitle.ToString())
+                    {
+                        break ;
+                    }
+                    genreId++;
+                }
+                Genre g = new Genre {GenreTitle=(Genres) Enum.Parse(typeof(Genres), model.Genre.GenreTitle.ToString())};
+                MovieGenre movieGenre = new MovieGenre
+                {
+                    MovieId = movieId,
+                    GenreId = _context.Genres.Last().GenreId + 1,
+                    Movie = model.Movie,
+                    Genre = g
+                };
+               
+                _context.Add(movieCasting);
+                _context.Add(movieDirection);
+                _context.Add(movieGenre);
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
     }
 }

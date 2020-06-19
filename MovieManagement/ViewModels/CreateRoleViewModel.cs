@@ -11,6 +11,5 @@ namespace MovieManagement.ViewModels
     {
         [Required]
         public string RoleName { get; set; }
-
     }
 }

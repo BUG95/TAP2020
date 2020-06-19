@@ -4,64 +4,63 @@
 @{
     ViewData["Title"] = "Watch";
 }
+    <h2 style="color:#00ccff">Play</h2>
 
-<h2>Play</h2>
+    <table class="table table-bordered table-dark" style="color:#00ccff">
+        <thead>
+            <tr>
+                <th scope="col">Movie</th>
+                <th scope="col">@Html.DisplayNameFor(model => model.MovieTitle)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model.MovieYear)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model.MovieLanguage)</th>
+                <th scope="col">Actors</th>
+                <th scope="col">Directors</th>
+                <th scope="col">Genre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Details</th>
+                <td>@Html.DisplayFor(model => model.MovieTitle)</td>
+                <td>@Html.DisplayFor(model => model.MovieYear)</td>
+                <td>@Html.DisplayFor(model => model.MovieLanguage)</td>
+                <td>
+                    @foreach (var item in Model.MovieCastings)
+                    {
+                        <p> @Html.DisplayFor(model => item.Actor.ActorFirstName) @Html.DisplayFor(model => item.Actor.ActorLastName) (@Html.DisplayFor(model => item.Actor.ActorGender))</p>
+                    }
+                </td>
+                <td>
+                    @foreach (var item in Model.MovieDirections)
+                    {
+                        <p> @Html.DisplayFor(model => item.Director.DirectorFirstName) @Html.DisplayFor(model => item.Director.DirectorLastName)</p>
+                    }
+                </td>
+                <td>
+                    @foreach (var item in Model.MovieGenres)
+                    {
+                        <p>@Html.DisplayFor(model => item.Genre.GenreTitle)</p>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-<table class="table table-bordered table-dark">
-    <thead>
-        <tr>
-            <th scope="col">Movie</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.MovieTitle)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.MovieYear)</th>
-            <th scope="col">@Html.DisplayNameFor(model => model.MovieLanguage)</th>
-            <th scope="col">Actors</th>
-            <th scope="col">Directors</th>
-            <th scope="col">Genre</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">Details</th>
-            <td>@Html.DisplayFor(model => model.MovieTitle)</td>
-            <td>@Html.DisplayFor(model => model.MovieYear)</td>
-            <td>@Html.DisplayFor(model => model.MovieLanguage)</td>
-            <td>
-                @foreach (var item in Model.MovieCastings)
-                {
-                    <p> @Html.DisplayFor(model => item.Actor.ActorFirstName) @Html.DisplayFor(model => item.Actor.ActorLastName) (@Html.DisplayFor(model => item.Actor.ActorGender))</p>
-                }
-            </td>
-            <td>
-                @foreach (var item in Model.MovieDirections)
-                {
-                    <p> @Html.DisplayFor(model => item.Director.DirectorFirstName) @Html.DisplayFor(model => item.Director.DirectorLastName)</p>
-                }
-            </td>
-            <td>
-                @foreach (var item in Model.MovieGenres)
-                {
-                    <p>@Html.DisplayFor(model => item.Genre.GenreTitle)</p>
-                }
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <div>
 
-<div>
+        <hr />
 
-    <hr />
+        <p align="center">
+            <iframe width="600" height="500" align="middle"
+                    src="https://www.youtube.com/embed/@Html.DisplayFor(model => model.MoviePath)"></iframe>
+        </p>
 
-    <p align="center">
-        <iframe width="600" height="500" align="middle"
-                src="https://www.youtube.com/embed/@Html.DisplayFor(model => model.MoviePath)"></iframe>
-    </p>
-
-    <hr />
-</div>
-<div>
-    @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-    {
-        <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-primary">Edit</a>
-    }
-    <a asp-action="Index" class="btn btn-primary">Back to Movie List</a>
-</div>
+        <hr />
+    </div>
+    <div>
+        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.MovieId" class="btn btn-primary">Edit</a>
+        }
+        <a asp-action="Index" class="btn btn-primary">Back to Movie List</a>
+    </div>
